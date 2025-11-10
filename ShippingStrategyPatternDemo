@@ -1,0 +1,79 @@
+public class ShippingStrategyPatternDemo {
+
+    public static class Order {
+        private double total;
+        private double totalWeight;
+        private Shipping shippingStrategy;
+
+        public Order(double total, double totalWeight, Shipping initialShipping) {
+            this.total = total;
+            this.totalWeight = totalWeight;
+            this.shippingStrategy = initialShipping;
+        }
+
+        public double getTotal() {
+            return total;
+        }
+
+        public double getTotalWeight() {
+            return totalWeight;
+        }
+
+        public void setShippingType(Shipping shipping) {
+            this.shippingStrategy = shipping;
+            System.out.println("Shipping mode switched to: " + shipping.getClass().getSimpleName());
+        }
+
+        public double getShippingCost() {
+            return shippingStrategy.getCost(this);
+        }
+
+        public String getShippingDate() {
+            return shippingStrategy.getDate(this);
+        }
+    }
+
+    public interface Shipping {
+        double getCost(Order order);
+        String getDate(Order order);
+    }
+
+    public static class Ground implements Shipping {
+        @Override
+        public double getCost(Order order) {
+            if (order.getTotal() > 150) {
+                return 0;
+            }
+            return 12 + order.getTotalWeight() * 1.2;
+        }
+
+        @Override
+        public String getDate(Order order) {
+            return "Estimated: 4–6 business days";
+        }
+    }
+
+    public static class Air implements Shipping {
+        @Override
+        public double getCost(Order order) {
+            return 25 + order.getTotalWeight() * 2.5;
+        }
+
+        @Override
+        public String getDate(Order order) {
+            return "Estimated: 1–2 business days";
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(">>> Strategy Pattern in Shipping <<<\n");
+
+        Order order = new Order(200.0, 10.5, new Ground());
+        System.out.println("Order Summary → Amount: $" + order.getTotal() + ", Weight: " + order.getTotalWeight() + "kg");
+        System.out.println("Ground Shipping → Cost: $" + order.getShippingCost() + ", Delivery: " + order.getShippingDate());
+
+        System.out.println("\nSwitching to Air Shipping...");
+        order.setShippingType(new Air());
+        System.out.println("Air Shipping → Cost: $" + order.getShippingCost() + ", Delivery: " + order.getShippingDate());
+    }
+}
