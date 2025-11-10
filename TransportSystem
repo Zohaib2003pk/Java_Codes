@@ -1,0 +1,80 @@
+public class TransportSystem {
+
+    public interface Engine {
+        void move();
+    }
+
+    public static class CombustionEngine implements Engine {
+        @Override
+        public void move() {
+            System.out.println("Combustion Engine: Using gasoline and generating motion via pistons.");
+        }
+    }
+
+    public static class ElectricEngine implements Engine {
+        @Override
+        public void move() {
+            System.out.println("Electric Engine: Drawing current from lithium battery and running motors.");
+        }
+    }
+
+    public interface Driver {
+        void navigate(String destination);
+    }
+
+    public static class Robot implements Driver {
+        @Override
+        public void navigate(String destination) {
+            System.out.println("AI Robot: Calculating route to " + destination + " using GPS and sensors.");
+        }
+    }
+
+    public static class Human implements Driver {
+        @Override
+        public void navigate(String destination) {
+            System.out.println("Human Driver: Manually steering vehicle towards " + destination + ".");
+        }
+    }
+
+    public static class Transport {
+        private Engine engine;
+        private Driver driver;
+
+        public Transport(Engine engine, Driver driver) {
+            this.engine = engine;
+            this.driver = driver;
+            System.out.println("New transport system initialized with " + driver.getClass().getSimpleName());
+        }
+
+        public void deliver(String destination, String cargo) {
+            System.out.println("\n=== Delivery Operation Started ===");
+            System.out.println("Item: " + cargo);
+            driver.navigate(destination);
+            engine.move();
+            System.out.println("Delivery completed: " + cargo + " reached " + destination);
+            System.out.println("==================================");
+        }
+
+        public void setEngine(Engine newEngine) {
+            this.engine = newEngine;
+            System.out.println("Engine replaced with " + newEngine.getClass().getSimpleName());
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("*** Strategy Pattern Example: Transport System ***\n");
+
+        Engine electric = new ElectricEngine();
+        Driver human = new Human();
+        Transport electricCar = new Transport(electric, human);
+        electricCar.deliver("Central Station", "Passengers");
+
+        Engine combustion = new CombustionEngine();
+        Driver robot = new Robot();
+        Transport drone = new Transport(combustion, robot);
+        drone.deliver("Hilltop Hub", "Medical Supplies");
+
+        electricCar.setEngine(combustion);
+        electricCar.deliver("Warehouse 9", "Electronic parts");
+    }
+}
