@@ -1,0 +1,85 @@
+public class CloudProviderRefactoring {
+
+    public interface CloudHostingProvider {
+        void createServer(String region);
+        void listServers(String region);
+    }
+
+    public interface CDNProvider {
+        String getCDNAddress();
+    }
+
+    public interface CloudStorageProvider {
+        void storeFile(String name);
+        String getFile(String name);
+    }
+
+    public static class Amazon implements CloudHostingProvider, CDNProvider, CloudStorageProvider {
+
+        @Override
+        public void storeFile(String name) {
+            System.out.println("Amazon Cloud: Uploading file to S3 bucket -> " + name);
+        }
+
+        @Override
+        public String getFile(String name) {
+            System.out.println("Amazon Cloud: Downloading file from S3 -> " + name);
+            return "data-from-" + name;
+        }
+
+        @Override
+        public void createServer(String region) {
+            System.out.println("Amazon Cloud: Launching EC2 instance in " + region);
+        }
+
+        @Override
+        public void listServers(String region) {
+            System.out.println("Amazon Cloud: Instances running in region " + region + " displayed.");
+        }
+
+        @Override
+        public String getCDNAddress() {
+            System.out.println("Amazon Cloud: CloudFront CDN endpoint retrieved.");
+            return "https://cdn.amazonaws.com";
+        }
+    }
+
+    public static class Dropbox implements CloudStorageProvider {
+
+        @Override
+        public void storeFile(String name) {
+            System.out.println("Dropbox Service: File saved successfully -> " + name);
+        }
+
+        @Override
+        public String getFile(String name) {
+            System.out.println("Dropbox Service: Accessing stored file -> " + name);
+            return "dropbox-content-" + name;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== Interface Segregation Principle Demonstration ===\n");
+
+        Amazon amazon = new Amazon();
+        Dropbox dropbox = new Dropbox();
+
+        System.out.println(">> Amazon Cloud Services");
+        amazon.createServer("ap-south-1");
+        amazon.storeFile("project-data.zip");
+        String cdnLink = amazon.getCDNAddress();
+        System.out.println("CDN URL: " + cdnLink + "\n");
+
+        System.out.println(">> Dropbox Cloud Services");
+        dropbox.storeFile("resume.pdf");
+        dropbox.getFile("resume.pdf");
+        System.out.println();
+
+        System.out.println(">> Polymorphism through Interfaces");
+        CloudStorageProvider client = amazon;
+        client.storeFile("shared.txt");
+
+        client = dropbox;
+        client.storeFile("assignment.docx");
+    }
+}
