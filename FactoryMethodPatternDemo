@@ -1,0 +1,93 @@
+public class FactoryMethodPatternDemo {
+
+    public interface Employee {
+        void doWork();
+    }
+
+    public static class Designer implements Employee {
+        @Override
+        public void doWork() {
+            System.out.println("Designer: Preparing UI mockups and visual concepts.");
+        }
+    }
+
+    public static class Programmer implements Employee {
+        @Override
+        public void doWork() {
+            System.out.println("Programmer: Writing backend logic and debugging errors.");
+        }
+    }
+
+    public static class Artist implements Employee {
+        @Override
+        public void doWork() {
+            System.out.println("Artist: Drawing digital assets and refining animations.");
+        }
+    }
+
+    public static class Tester implements Employee {
+        @Override
+        public void doWork() {
+            System.out.println("Tester: Conducting test cases to validate product stability.");
+        }
+    }
+
+    public abstract static class Company {
+        public void createSoftware() {
+            System.out.println("\n=== Initiating Software Production ===");
+            Employee[] team = getEmployees();
+
+            if (team == null || team.length == 0) {
+                System.out.println("No team members available for this project.");
+                return;
+            }
+
+            System.out.println("Team lineup confirmed. Beginning workflow...");
+            for (Employee member : team) {
+                member.doWork();
+            }
+            System.out.println("=== Project Finished Successfully ===");
+        }
+
+        public abstract Employee[] getEmployees();
+    }
+
+    public static class GameDevCompany extends Company {
+        @Override
+        public Employee[] getEmployees() {
+            System.out.println("GameDevCompany: Forming a creative team of Designers and Artists...");
+            return new Employee[]{
+                new Designer(),
+                new Artist()
+            };
+        }
+    }
+
+    public static class OutsourcingCompany extends Company {
+        @Override
+        public Employee[] getEmployees() {
+            System.out.println("OutsourcingCompany: Deploying an efficient team of Programmers and Testers...");
+            return new Employee[]{
+                new Programmer(),
+                new Tester()
+            };
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(">>> Demonstrating Factory Method Pattern <<<\n");
+
+        Company gameDev = new GameDevCompany();
+        Company outSource = new OutsourcingCompany();
+
+        System.out.println("Client: Hiring Game Development Company to produce a mobile game.");
+        gameDev.createSoftware();
+
+        System.out.println("\n--------------------------------------------------");
+
+        System.out.println("Client: Hiring Outsourcing Company for software maintenance.");
+        outSource.createSoftware();
+
+        System.out.println("\nBoth companies followed the same process, but used different employee sets internally.");
+    }
+}
